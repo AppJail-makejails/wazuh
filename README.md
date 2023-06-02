@@ -45,7 +45,7 @@ EOF
 ```
 ### Bootstrap a FreeBSD version
 
-Before you can begin creating containers, AppJail needs to fetch and extract components for create jails. If you are creating FreeBSD jails it must be a version equal or lesser than your host version. In this example we will create a 13.2-RELEASE bootstrap.
+Before you can begin creating containers, AppJail needs to fetch and extract components for create jails. If you are creating FreeBSD jails it must be a version equal or lesser than your host version.
 
 ```console
 # appjail fetch
