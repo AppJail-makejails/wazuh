@@ -4,7 +4,7 @@ Wazuh is a security platform that provides unified XDR and SIEM protection for e
 
 wazuh.com
 
-![wazuh logo](https://upload.wikimedia.org/wikipedia/commons/6/6c/Wazuh_blue.png)
+![wazuh logo](https://i.ibb.co/L1bqRk1/Wazuh.png)
 
 ## Goals
 
