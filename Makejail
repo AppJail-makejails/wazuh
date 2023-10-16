@@ -5,7 +5,7 @@ ARG network=wazuh-net
 
 CMD sed -e "s|quarterly|latest|g" -i.bak /etc/pkg/FreeBSD.conf
 
-PKG bash wazuh-indexer wazuh-server wazuh-dashboard
+PKG bash wazuh-indexer wazuh-server wazuh-dashboard openjdk17
 
 CMD openssl req -x509 -batch -nodes -days 365 -newkey rsa:2048 -subj "/C=US/ST=California/CN=Wazuh/" -keyout /var/ossec/etc/sslmanager.key -out /var/ossec/etc/sslmanager.cert
 CMD chmod 640 /var/ossec/etc/sslmanager.key
@@ -13,6 +13,13 @@ CMD chmod 640 /var/ossec/etc/sslmanager.cert
 
 CMD cp /etc/localtime /var/ossec/etc
 CMD cp /usr/local/etc/wazuh-server/wazuh-template.json /usr/local/etc/logstash/
+COPY files/var/ossec/etc/decoders/local_decoder.xml /var/ossec/etc/decoders/
+CMD chown wazuh:wazuh /var/ossec/etc/decoders/local_decoder.xml
+CMD chmod 660 /var/ossec/etc/decoders/local_decoder.xml
+COPY files/var/ossec/etc/rules/local_rules.xml /var/ossec/etc/rules/
+CMD chown wazuh:wazuh /var/ossec/etc/rules/local_rules.xml
+CMD chmod 660 /var/ossec/etc/rules/local_rules.xml
+COPY files/var/ossec/etc/ossec.conf /var/ossec/etc
 COPY files/var/ossec/etc/ossec.conf /var/ossec/etc
 COPY files/usr/local/etc/beats/filebeat.yml /usr/local/etc/beats/
 COPY files/usr/local/etc/logstash/logstash.conf /usr/local/etc/logstash/
@@ -41,11 +48,13 @@ CMD rm /root/pre-opensearch-init.sh
 
 CMD mkdir -p /usr/local/etc/opensearch-dashboards/certs/
 CMD mkdir -p /usr/local/etc/opensearch/certs/
+CMD cd /root/; fetch "https://people.freebsd.org/~acm/ports/wazuh/freebsd-logo.png"
+CMD cd /root/; fetch "https://people.freebsd.org/~acm/ports/wazuh/freebsd-mark-logo.png"
 CMD cd /root/; fetch "https://people.freebsd.org/~acm/ports/wazuh/wazuh-gen-certs.tar.gz"
 CMD cd /root/; tar xvfz wazuh-gen-certs.tar.gz
-CMD echo 'dashboard_ip="${server_ip}"' > /root/wazuh-gen-certs/dashboard.lst
-CMD echo 'indexer1_ip="${server_ip}"' > /root/wazuh-gen-certs/indexer.lst
-CMD echo 'server1_ip="${server_ip}"' > /root/wazuh-gen-certs/server.lst
+CMD echo "dashboard_ip=${server_ip}" > /root/wazuh-gen-certs/dashboard.lst
+CMD echo "indexer1_ip=${server_ip}" > /root/wazuh-gen-certs/indexer.lst
+CMD echo "server1_ip=${server_ip}" > /root/wazuh-gen-certs/server.lst
 CMD cd /root/wazuh-gen-certs; echo y | sh gen-certs.sh
 
 CMD chmod 660 /var/ossec/etc/ossec.conf
@@ -77,6 +86,9 @@ CMD cp /root/wazuh-gen-certs/wazuh-certificates/root-ca.pem /usr/local/etc/opens
 CMD chmod 640 /usr/local/etc/opensearch-dashboards/certs/root-ca.pem
 CMD chown www:www /usr/local/etc/opensearch-dashboards/certs/root-ca.pem
 
+CMD cp /root/freebsd-logo.png /usr/local/www/opensearch-dashboards/src/core/server/core_app/assets/logos/
+CMD cp /root/freebsd-mark-logo.png /usr/local/www/opensearch-dashboards/src/core/server/core_app/assets/logos/
+
 SYSRC wazuh_manager_enable=YES
 SYSRC filebeat_enable=YES
 SYSRC logstash_enable=YES
@@ -88,6 +100,9 @@ SERVICE opensearch start
 
 CMD sh /root/post-opensearch-init.sh
 CMD rm /root/post-opensearch-init.sh
+
+CMD chmod 640 /var/ossec/etc/authd.pass
+CMD chown root:wazuh /var/ossec/etc/authd.pass
 
 SERVICE wazuh-manager start
 SERVICE filebeat start
