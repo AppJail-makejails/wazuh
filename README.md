@@ -71,7 +71,7 @@ Create a container named `wazuh` with a private IP address `10.0.0.2`. Take on m
 # appjail makejail -f gh+AppJail-makejails/wazuh -j wazuh -- --network wazuh-net --server_ip 10.0.0.2
 ```
 
-When it is done you will see the credentials for connect to wazuh-dashboards via web browser.
+When it is done you will see credentials info for connect to wazuh-dashboards via web browser and one password to agent enrollment.
 
 ```
 ################################################ 
