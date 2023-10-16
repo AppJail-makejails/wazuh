@@ -80,6 +80,9 @@ When it is done you will see the credentials for connect to wazuh-dashboards via
  Username : admin                                 
  Password : @hkXudpIp93xbIOvD                          
 ################################################
+ Wazuh agent enrollment password                
+ Password : @sXDudSIKJKfMTmCroHGvirVPE80=
+################################################
 ```
 
 Keep it to another secure place.
